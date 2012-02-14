@@ -19,7 +19,7 @@ module GemfileSupport
     return unless uses_bundler?
     return if packaged_with_bundler_in_deployment_mode?
 
-    safe_env = [ "HTTP_PROXY", "HTTPS_PROXY", "NO_PROXY", "C_INCLUDE_PATH", "LIBRARY_PATH" ].map { |e| "#{e}='#{ENV[e]}'" }.join(" ")
+    safe_env = [ "LC_ALL", "LC", "LANG", "HTTP_PROXY", "HTTPS_PROXY", "NO_PROXY", "C_INCLUDE_PATH", "LIBRARY_PATH" ].map { |e| "#{e}='#{ENV[e]}'" }.join(" ")
     path     = [ "/bin", "/usr/bin", "/sbin", "/usr/sbin"]
     path.unshift(File.dirname(ruby)) if ruby[0] == '/'
 
