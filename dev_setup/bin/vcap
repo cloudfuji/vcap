@@ -289,7 +289,7 @@ module Run
       exit unless ask_to_continue "#{'CAUTION'.red}: All data will be lost. Continue?"
     end
 
-    # Try not to shoot ourselves in the foot..
+    # Try not to shoot ourselves in the foot.. "
     running_components = components([]).select {|c| c.running?}.map{|c| c.name }
     unless running_components.empty?
       puts "It looks like the following components are already running: #{running_components.join(', ')}"
@@ -390,7 +390,7 @@ module Run
   private
 
   def self.core
-    %w(router cloud_controller dea health_manager)
+    %w(router cloud_controller dea health_manager resource_monitor)
   end
 
   def self.services

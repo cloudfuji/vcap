@@ -39,8 +39,14 @@ end
 
 deployment_config_path = Deployment.get_config_path(options["name"], options["home"])
 
+# Allow the invoker to pick which components, but fall through the the
+# hard-coded config if no components are given as ARGS
+vcap_components = {}
+vcap_components["components"] = ARGV[1..-1]
+vcap_components = nil if vcap_components["components"].empty?
+
 begin
-  vcap_components = JSON.parse(File.read(Deployment.get_vcap_config_file(deployment_config_path)))
+  vcap_components ||= JSON.parse(File.read(Deployment.get_vcap_config_file(deployment_config_path)))
   deployment_info = JSON.parse(File.read(Deployment.get_deployment_info_file(deployment_config_path)))
 rescue => e
   STDERR.puts "#{e.inspect}. Could not parse deployment config files . Please check your deployment."
