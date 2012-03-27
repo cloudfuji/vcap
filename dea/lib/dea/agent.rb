@@ -656,8 +656,9 @@ module DEA
           process.send_data("exit\n")
         end
 
-        exit_operation = proc do |_, status|
+        exit_operation = proc do |out, status|
           @logger.info("#{name} completed running with status = #{status}.")
+          @logger.info("#{name} output: #{out}")
           @logger.info("#{name} uptime was #{Time.now - instance[:start]}.")
           stop_droplet(instance)
         end
