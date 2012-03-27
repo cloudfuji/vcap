@@ -91,7 +91,8 @@ class App < ActiveRecord::Base
   end
 
   def as_json(options = nil)
-    { :name => name,
+    { :id => id,
+      :name => name,
       :staging => {:model => framework, :stack => runtime},
       :uris => mapped_urls,
       :instances => instances,
