@@ -111,7 +111,7 @@ module ClientConnection
     unless droplets = Router.lookup_droplet(host)
       Router.log.debug "No droplet registered for #{host}"
       VCAP::Component.varz[:bad_requests] += 1
-      send_data(Router.notfound_redirect || ERROR_404_RESPONSE)
+      send_data(Router.redirect_smart_404(host) || ERROR_404_RESPONSE)
       close_connection_after_writing
       return
     end
@@ -144,6 +144,8 @@ module ClientConnection
     end
 
     @droplet[:requests] += 1
+    @droplet[:last_accessed] = Time.now
+    NATS.publish('droplet.accessed', Yajl::Encoder.encode(@droplet))
 
     # Client tracking, override with header if its set (nginx to unix domain socket)
     _, client_ip = Socket.unpack_sockaddr_in(get_peername) unless @is_unix_socket
