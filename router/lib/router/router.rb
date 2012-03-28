@@ -72,6 +72,8 @@ class Router
       VCAP::Component.varz[:requests_per_sec] = ((new_num_requests - @current_num_requests)/delta).to_i
       @current_num_requests = new_num_requests
 
+      VCAP::Component.varz[:raw_droplets] = @droplets
+
       # Go ahead and calculate rates for all backends here.
       apps = []
       @droplets.each_pair do |url, instances|
@@ -165,7 +167,7 @@ class Router
       @droplets[url]
     end
 
-    def register_droplet(url, host, port, tags)
+    def register_droplet(droplet_id, url, host, port, tags)
       return unless host && port
       url.downcase!
       droplets = @droplets[url] || []
@@ -179,6 +181,7 @@ class Router
       }
       tags.delete_if { |key, value| key.nil? || value.nil? } if tags
       droplet = {
+        :droplet_id => droplet_id,
         :host => host,
         :port => port,
         :connections => [],
