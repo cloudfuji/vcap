@@ -1,3 +1,5 @@
+require 'cgi'
+
 # Copyright (c) 2009-2011 VMware, Inc.
 class Router
 
