@@ -31,11 +31,16 @@ class Router
       @expose_all_apps = config['status']['expose_all_apps'] if config['status']
     end
 
+    def redirect_smart_404(url)
+      url = "https://#{url}" unless url[0..3] == "http"
+      "HTTP/1.1 302 Not Found\r\nConnection: close\r\nLocation: http://bushi.do/apps/idle?url=#{CGI.escape(url)}\r\n\r\n"
+    end
+
     def setup_listeners
       NATS.subscribe('router.register') { |msg|
         msg_hash = Yajl::Parser.parse(msg, :symbolize_keys => true)
         return unless uris = msg_hash[:uris]
-        uris.each { |uri| register_droplet(uri, msg_hash[:host], msg_hash[:port], msg_hash[:tags]) }
+        uris.each { |uri| register_droplet(msg_hash[:droplet_id], uri, msg_hash[:host], msg_hash[:port], msg_hash[:tags]) }
       }
       NATS.subscribe('router.unregister') { |msg|
         msg_hash = Yajl::Parser.parse(msg, :symbolize_keys => true)
